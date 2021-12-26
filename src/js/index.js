@@ -31,7 +31,15 @@ function App() {
     const menuItemTemplate = this.menu[this.currentCategory]
       .map((beverage, idx) => {
         return `<li data-menu-id="${idx}" class="menu-list-item d-flex items-center py-2">
-  <span class="w-100 pl-2 menu-name">${beverage.name}</span>
+  <span class="${beverage.soldOut ? 'sold-out' : ''} w-100 pl-2 menu-name">${
+          beverage.name
+        }</span>
+  <button
+    type="button"
+    class="bg-gray-50 text-gray-500 text-sm mr-1 menu-sold-out-button"
+  >
+    품절
+  </button>
   <button
     type="button"
     class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
@@ -62,7 +70,7 @@ function App() {
       return;
     }
     const menuName = $('#menu-name').value;
-    this.menu[this.currentCategory].push({ name: menuName });
+    this.menu[this.currentCategory].push({ name: menuName, soldOut: false });
     store.setLocalStorage(this.menu);
     render();
     updateMenuCount();
@@ -86,6 +94,14 @@ function App() {
     updateMenuCount();
   };
 
+  const soldOutMenu = (e) => {
+    const menuId = e.target.closest('li').dataset.menuId;
+    this.menu[this.currentCategory][menuId].soldOut =
+      !this.menu[this.currentCategory][menuId].soldOut;
+    store.setLocalStorage(this.menu);
+    render();
+  };
+
   $('#menu-form').addEventListener('submit', (e) => {
     e.preventDefault();
   });
@@ -102,11 +118,17 @@ function App() {
   $('#menu-list').addEventListener('click', (e) => {
     if (e.target.classList.contains('menu-edit-button')) {
       updateMenuName(e);
+      return; // 불필요한 로직을 처리하지 않도록
     }
     if (e.target.classList.contains('menu-remove-button')) {
       if (confirm('메뉴를 삭제하시겠습니까?')) {
         removeMenuName(e);
+        return;
       }
+    }
+    if (e.target.classList.contains('menu-sold-out-button')) {
+      soldOutMenu(e);
+      return;
     }
   });
 
