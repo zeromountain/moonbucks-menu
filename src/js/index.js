@@ -8,6 +8,34 @@ const MenuApi = {
     const response = await fetch(`${BASE_URL}/category/${category}/menu`);
     return response.json();
   },
+  async createMenu(category, name) {
+    const response = await fetch(`${BASE_URL}/category/${category}/menu`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name }),
+    });
+    if (!response.ok) {
+      console.error('에러가 발생했습니다.');
+    }
+  },
+  async updateMenu(category, name, menuId) {
+    const response = await fetch(
+      `${BASE_URL}/category/${category}/menu/${menuId}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name }),
+      }
+    );
+    if (!response.ok) {
+      console.error('에러가 발생했습니다.');
+    }
+    return response.json();
+  },
 };
 
 function App() {
@@ -31,10 +59,11 @@ function App() {
   };
 
   const render = () => {
-    // TODO: li 요소의 id값을 고유한 값으로 변경 → 배열의 인덱스로 할 경우, 삭제할때마다 id값이 변경
     const menuItemTemplate = this.menu[this.currentCategory]
-      .map((beverage, idx) => {
-        return `<li data-menu-id="${idx}" class="menu-list-item d-flex items-center py-2">
+      .map((beverage) => {
+        return `<li data-menu-id="${
+          beverage.id
+        }" class="menu-list-item d-flex items-center py-2">
       <span class="${
         beverage.soldOut ? 'sold-out' : ''
       } w-100 pl-2 menu-name">${beverage.name}</span>
@@ -75,15 +104,7 @@ function App() {
     }
     const menuName = $('#menu-name').value;
 
-    await fetch(`${BASE_URL}/category/${this.currentCategory}/menu`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name: menuName }),
-    })
-      .then((res) => res.json())
-      .then((data) => console.log(data));
+    await MenuApi.createMenu(this.currentCategory, menuName);
 
     this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(
       this.currentCategory
@@ -92,12 +113,14 @@ function App() {
     $('#menu-name').value = '';
   };
 
-  const updateMenuName = (e) => {
+  const updateMenuName = async (e) => {
     const menuId = e.target.closest('li').dataset.menuId;
     const $menuName = e.target.closest('li').querySelector('.menu-name');
     const updatedMenuName = prompt('메뉴명을 수정하세요', $menuName.innerText);
-    this.menu[this.currentCategory][menuId].name = updatedMenuName;
-    store.setLocalStorage(this.menu);
+    await MenuApi.updateMenu(this.currentCategory, updatedMenuName, menuId);
+    this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(
+      this.currentCategory
+    );
     render();
   };
 
@@ -110,8 +133,8 @@ function App() {
 
   const soldOutMenu = (e) => {
     const menuId = e.target.closest('li').dataset.menuId;
-    this.menu[this.currentCategory][menuId].soldOut =
-      !this.menu[this.currentCategory][menuId].soldOut;
+    this.menu[this.currentCategory][menuId].isSoldOut =
+      !this.menu[this.currentCategory][menuId].isSoldOut;
     store.setLocalStorage(this.menu);
     render();
   };
