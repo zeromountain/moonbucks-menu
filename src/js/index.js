@@ -68,6 +68,14 @@ function App() {
       alert('값을 입력해주세요. 공백 문자만을 입력할 수 없습니다.');
       return;
     }
+    const duplicateItem = this.menu[this.currentCategory].find(
+      (menuItem) => menuItem.name === $('#menu-name').value
+    );
+    if (duplicateItem) {
+      alert('이미 등록된 메뉴입니다. 다시 입력해주세요.');
+      $('#menu-name').value = '';
+      return;
+    }
     const menuName = $('#menu-name').value;
 
     await MenuApi.createMenu(this.currentCategory, menuName);
