@@ -19,12 +19,33 @@
 
 .modal-inner {
   transition: top 0.25s ease;
-  max-width: 960px;
+  height: 300px;
+  min-width: 400px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
   margin: auto;
   overflow: auto;
   background: #fff;
   border-radius: 5px;
   position: relative;
+}
+
+.modal .template {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-button-container {
+  display: flex;
+  margin: 15px auto;
+}
+
+.modal-button-container button {
+  width: 150px;
 }
 
 .modal-close {

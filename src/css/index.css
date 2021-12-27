@@ -52,7 +52,7 @@ ul li button:hover {
   color: gray;
 }
 
-.modal-wrapper {
+/* .modal-wrapper {
   visibility: hidden;
   display: flex;
   justify-content: center;
@@ -78,4 +78,4 @@ ul li button:hover {
   flex-direction: column;
   justify-content: center;
   position: absolute;
-}
+} */

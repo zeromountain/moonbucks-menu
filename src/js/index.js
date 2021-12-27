@@ -1,5 +1,6 @@
 import { $ } from './utils/dom.js';
 import MenuApi from './api/index.js';
+import Modal from './ui/modal.js';
 
 function App() {
   // 상태(변할 수 있는 데이터) - 메뉴명
@@ -87,9 +88,14 @@ function App() {
   const updateMenuName = async (e) => {
     const menuId = e.target.closest('li').dataset.menuId;
     const $menuName = e.target.closest('li').querySelector('.menu-name');
-    const updatedMenuName = prompt('메뉴명을 수정하세요', $menuName.innerText);
-    await MenuApi.updateMenu(this.currentCategory, updatedMenuName, menuId);
-
+    console.log($menuName.innerText);
+    Modal({
+      currentCategory: this.currentCategory,
+      menuId,
+      inputValue: $menuName.innerText,
+    });
+    // const updatedMenuName = prompt('메뉴명을 수정하세요', $menuName.innerText);
+    // await MenuApi.updateMenu(this.currentCategory, updatedMenuName, menuId);
     render();
   };
 
